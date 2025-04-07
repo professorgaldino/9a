@@ -60,7 +60,7 @@
 
   <div class="nav">
     <button onclick="goPrev()">← Anterior</button>
-    <span class="page-number" id="page-number">Página: a1.html</span>
+    <span class="page-number" id="page-number">Página: 1</span>
     <button onclick="goNext()">Próxima →</button>
   </div>
 
@@ -81,8 +81,10 @@
     const pageNumber = document.getElementById("page-number");
 
     function updateViewer() {
-      viewer.src = pages[currentIndex];
-      pageNumber.textContent = "Página: " + pages[currentIndex];
+      const currentPage = pages[currentIndex];
+      const pageNum = currentPage.match(/\d+/)[0]; // Extrai só o número
+      viewer.src = currentPage;
+      pageNumber.textContent = "Página: " + pageNum;
     }
 
     function goPrev() {
@@ -98,6 +100,9 @@
         updateViewer();
       }
     }
+
+    // Inicializa corretamente
+    updateViewer();
   </script>
 
 </body>
