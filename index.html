@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Index Navegação</title>
+  <title>Boletim Escolar</title>
   <style>
     * {
       box-sizing: border-box;
@@ -33,10 +33,10 @@
       background: #fff;
       border: none;
       color: #007bff;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
       border-radius: 8px;
-      padding: 6px 16px;
+      padding: 6px 14px;
       cursor: pointer;
       transition: 0.2s ease-in-out;
     }
@@ -45,8 +45,18 @@
       background: #e9ecef;
     }
 
+    .page-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .page-number {
       font-weight: bold;
+      background: white;
+      color: #007bff;
+      padding: 6px 12px;
+      border-radius: 8px;
     }
 
     iframe {
@@ -59,9 +69,15 @@
 <body>
 
   <div class="nav">
-    <button onclick="goPrev()">← Anterior</button>
-    <span class="page-number" id="page-number">Página: 1</span>
-    <button onclick="goNext()">Próxima →</button>
+    <button onclick="window.location.href='sala.html'">← Voltar para as salas</button>
+
+    <div class="page-controls">
+      <button onclick="goPrev()">← Anterior</button>
+      <span class="page-number" id="page-number">Página: 1</span>
+      <button onclick="goNext()">Próxima →</button>
+    </div>
+
+    <button onclick="window.location.href='outros9a.html'">Verificar outras situações →</button>
   </div>
 
   <iframe id="viewer" src="a1.html"></iframe>
@@ -101,7 +117,6 @@
       }
     }
 
-    // Inicializa corretamente
     updateViewer();
   </script>
 
