@@ -19,6 +19,7 @@
       height: 100vh;
     }
 
+    /* Estilo da barra de navegação */
     .nav {
       display: flex;
       justify-content: space-between;
@@ -45,6 +46,7 @@
       background: #e9ecef;
     }
 
+    /* Controles de navegação das páginas */
     .page-controls {
       display: flex;
       align-items: center;
@@ -68,21 +70,29 @@
 </head>
 <body>
 
+  <!-- Barra de navegação -->
   <div class="nav">
-    <button onclick="window.location.href='https://professorgaldino.github.io/sitetv/sala.html'">← Voltar para as salas</button>
+    <button onclick="window.location.href='https://professorgaldino.github.io/sitetv/sala.html'">
+      ← Voltar para as salas
+    </button>
 
+    <!-- Controles para navegação entre páginas -->
     <div class="page-controls">
       <button onclick="goPrev()">← Anterior</button>
       <span class="page-number" id="page-number">Página: 1</span>
       <button onclick="goNext()">Próxima →</button>
     </div>
 
-    <button onclick="window.location.href='outros9a.html'">Verificar outras situações →</button>
+    <button onclick="window.location.href='outros9a.html'">
+      Verificar outras situações →
+    </button>
   </div>
 
+  <!-- Exibição do conteúdo da página -->
   <iframe id="viewer" src="a1.html"></iframe>
 
   <script>
+    // Lista das páginas do boletim
     const pages = [
       "a1.html", "a2.html", "a3.html", "a4.html", "a5.html", "a7.html", "a8.html",
       "a9.html", "a10.html", "a11.html", "a12.html", "a14.html", "a15.html", "a16.html",
@@ -91,32 +101,36 @@
       "a32.html", "a33.html"
     ];
 
-    let currentIndex = 0;
+    let currentIndex = 0; // Índice da página atual
 
-    const viewer = document.getElementById("viewer");
-    const pageNumber = document.getElementById("page-number");
+    const viewer = document.getElementById("viewer"); // iframe para exibição da página
+    const pageNumber = document.getElementById("page-number"); // Exibição do número da página
 
+    // Função para atualizar o iframe com a página atual
     function updateViewer() {
       const currentPage = pages[currentIndex];
-      const pageNum = currentPage.match(/\d+/)[0]; // Extrai só o número
-      viewer.src = currentPage;
-      pageNumber.textContent = "Página: " + pageNum;
+      const pageNum = currentPage.match(/\d+/)[0]; // Extrai o número da página do nome do arquivo
+      viewer.src = currentPage; // Atualiza o conteúdo do iframe
+      pageNumber.textContent = "Página: " + pageNum; // Atualiza o número da página visível
     }
 
+    // Função para navegar para a página anterior
     function goPrev() {
       if (currentIndex > 0) {
-        currentIndex--;
-        updateViewer();
+        currentIndex--; // Decrementa o índice
+        updateViewer(); // Atualiza a visualização
       }
     }
 
+    // Função para navegar para a próxima página
     function goNext() {
       if (currentIndex < pages.length - 1) {
-        currentIndex++;
-        updateViewer();
+        currentIndex++; // Incrementa o índice
+        updateViewer(); // Atualiza a visualização
       }
     }
 
+    // Inicializa com a primeira página
     updateViewer();
   </script>
 
