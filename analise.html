@@ -1,177 +1,328 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Boletim Escolar</title>
+  <meta charset="UTF-8">
+  <title>Dashboard de Notas por Bimestre</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #e0f7fa;
       margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f2f5;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
     }
-
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #007bff;
-      color: white;
-      padding: 12px 24px;
-      font-size: 18px;
+    h1 {
+      color: #333;
     }
-
-    .nav button {
-      background: #fff;
-      border: none;
-      color: #007bff;
+    select {
+      padding: 5px;
       font-size: 16px;
-      font-weight: bold;
-      border-radius: 8px;
-      padding: 6px 14px;
-      cursor: pointer;
-      transition: 0.2s ease-in-out;
-    }
-
-    .nav button:hover {
-      background: #e9ecef;
-    }
-
-    .page-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .page-number {
-      font-weight: bold;
-      background: white;
-      color: #007bff;
-      padding: 6px 12px;
-      border-radius: 8px;
-    }
-
-    .page-selector {
       margin-top: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      padding: 10px;
     }
-
-    .page-selector button {
-      background: #fff;
-      border: 2px solid #007bff;
-      color: #007bff;
-      font-size: 16px;
-      padding: 5px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s ease-in-out;
+    #mensagem {
+      margin-top: 20px;
+      color: red;
+      font-weight: bold;
     }
-
-    .page-selector button:hover {
-      background: #007bff;
-      color: white;
+    #grafico-container {
+      max-width: 900px;
+      margin-top: 40px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
-    iframe {
-      flex: 1;
-      border: none;
+    table {
       width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+      background-color: white;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #eee;
+    }
+    h2 {
+      margin-top: 40px;
+    }
+    #logo {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      max-width: 150px;
+      opacity: 0.7;
+    }
+    #voltarBtn {
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #voltarBtn:hover {
+      background-color: #004d40;
     }
   </style>
 </head>
 <body>
 
-  <div class="nav">
-    <button onclick="window.location.href='https://professorgaldino.github.io/sitetv/sala.html'">← Voltar para as salas</button>
+  <img id="logo" src="logoescola.jpeg" alt="Logo da Escola">
 
-    <div class="page-controls">
-      <button onclick="goPrev()">← Anterior</button>
-      <span class="page-number" id="page-number">Página: 1</span>
-      <button onclick="goNext()">Próxima →</button><button onclick="window.location.href='analise.html'" 
-            style="background: #007bff; color: white; border: none; padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer;">
-      📊 Análise
-      </button>
-    </div>
+  <h1>Dashboard de Notas</h1>
 
-    <button onclick="window.location.href='outros.html'">Verificar outras situações →</button>
+  <label for="bimestre">Selecione o bimestre:</label>
+  <select id="bimestre">
+    <option value="1">1º Bimestre</option>
+    <option value="2">2º Bimestre</option>
+    <option value="3">3º Bimestre</option>
+    <option value="4">4º Bimestre</option>
+  </select>
+
+  <p id="mensagem"></p>
+
+  <div id="grafico-container">
+    <canvas id="graficoNotas"></canvas>
   </div>
 
-  <div class="page-selector" id="page-selector"></div>
+  <div id="tabela-container"></div>
 
-  <iframe id="viewer" src=""></iframe>
+  <button id="voltarBtn" onclick="window.location.href='index.html';">Voltar à Sala</button>
 
   <script>
-    const pages = [
-      "a1.html", "a2.html", "a3.html", "a4.html", "a5.html",
-      "a7.html", "a8.html", "a9.html", "a10.html", "a11.html", "a12.html",
-      "a14.html", "a15.html", "a16.html", "a17.html", "a18.html", "a19.html",
-      "a20.html", "a21.html", "a22.html", "a23.html", "a24.html", "a25.html",
-      "a26.html", "a27.html", "a28.html", "a30.html", "a31.html", "a32.html", "a33.html"
-    ];
+    const chartCanvas = document.getElementById('graficoNotas');
+    const tabelaContainer = document.getElementById('tabela-container');
+    let graficoNotas = null;
 
-    let currentIndex = 0;
+    async function carregarDados(bimestre) {
+      const mensagem = document.getElementById('mensagem');
+      mensagem.textContent = 'Carregando...';
+      tabelaContainer.innerHTML = '';
 
-    const viewer = document.getElementById("viewer");
-    const pageNumber = document.getElementById("page-number");
-    const pageSelector = document.getElementById("page-selector");
+      try {
+        const [dadosRes, alunosRes] = await Promise.all([
+          fetch(`dados${bimestre}.json`),
+          fetch(`alunos.json`)
+        ]);
 
-    const updateViewer = () => {
-      const currentPage = pages[currentIndex];
-      const pageNum = currentPage.match(/\d+/)?.[0] || "?";
-      viewer.src = currentPage;
-      pageNumber.textContent = "Página: " + pageNum;
-      highlightCurrentButton();
-    };
+        const dados = await dadosRes.json();
+        const alunos = await alunosRes.json();
 
-    const goPrev = () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        updateViewer();
-      }
-    };
+        const analise = {};
+        const todasDisciplinas = new Set();
+        const notasVermelhas = [];
+        const semNotas = [];
+        let encontrouNota = false;
 
-    const goNext = () => {
-      if (currentIndex < pages.length - 1) {
-        currentIndex++;
-        updateViewer();
-      }
-    };
+        for (const id in dados) {
+          const disciplinas = dados[id];
+          for (const disc in disciplinas) {
+            todasDisciplinas.add(disc);
+          }
+        }
 
-    const highlightCurrentButton = () => {
-      const buttons = pageSelector.querySelectorAll("button");
-      buttons.forEach((btn, idx) => {
-        btn.style.background = idx === currentIndex ? "#007bff" : "#fff";
-        btn.style.color = idx === currentIndex ? "#fff" : "#007bff";
-      });
-    };
-
-    const createPageButtons = () => {
-      pages.forEach((page, index) => {
-        const pageNum = page.match(/\d+/)?.[0] || "?";
-        const button = document.createElement("button");
-        button.textContent = pageNum;
-        button.addEventListener("click", () => {
-          currentIndex = index;
-          updateViewer();
+        todasDisciplinas.forEach(disc => {
+          analise[disc] = { boas: 0, ruins: 0, semnota: 0 };
         });
-        pageSelector.appendChild(button);
-      });
-    };
 
-    createPageButtons();
-    updateViewer();
+        for (const id in dados) {
+          const aluno = alunos[id];
+          if (!aluno) continue;
+
+          const disciplinas = dados[id];
+          todasDisciplinas.forEach(disc => {
+            const notaStr = disciplinas?.[disc]?.notas?.[bimestre - 1];
+            const nota = parseFloat(notaStr);
+
+            if (notaStr === '-' || notaStr === undefined || isNaN(nota)) {
+              analise[disc].semnota++;
+              semNotas.push({ aluno: aluno.nome, disciplina: disc });
+              return;
+            }
+
+            encontrouNota = true;
+
+            if (nota >= 5) {
+              analise[disc].boas++;
+            } else {
+              analise[disc].ruins++;
+              notasVermelhas.push({
+                aluno: aluno.nome,
+                disciplina: disc,
+                nota: nota.toFixed(1)
+              });
+            }
+          });
+        }
+
+        if (todasDisciplinas.size === 0) {
+          mensagem.textContent = 'Não há disciplinas disponíveis neste bimestre.';
+          if (graficoNotas) graficoNotas.destroy();
+          return;
+        }
+
+        if (!encontrouNota) {
+          mensagem.textContent = 'Nenhuma nota lançada neste bimestre. As disciplinas aparecerão zeradas.';
+        } else {
+          mensagem.textContent = '';
+        }
+
+        atualizarGrafico(analise);
+        gerarTabelas(notasVermelhas, semNotas);
+      } catch (error) {
+        mensagem.textContent = 'Erro ao carregar os dados.';
+        console.error(error);
+        if (graficoNotas) graficoNotas.destroy();
+      }
+    }
+
+    function atualizarGrafico(analise) {
+      const labels = Object.keys(analise);
+      const boas = labels.map(d => analise[d].boas);
+      const ruins = labels.map(d => analise[d].ruins);
+      const semnota = labels.map(d => analise[d].semnota);
+
+      if (graficoNotas) graficoNotas.destroy();
+
+      graficoNotas = new Chart(chartCanvas, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Notas ≥ 5 (Satisfatórias)',
+              data: boas,
+              backgroundColor: 'green'
+            },
+            {
+              label: 'Notas < 5 (Vermelhas)',
+              data: ruins,
+              backgroundColor: 'red'
+            },
+            {
+              label: 'Sem Nota',
+              data: semnota,
+              backgroundColor: 'gray'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Quantidade de Alunos'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Disciplinas'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'top'
+            },
+            title: {
+              display: true,
+              text: 'Análise de Notas por Disciplina'
+            }
+          }
+        }
+      });
+    }
+
+    function gerarTabelas(notas, semNotas) {
+      let html = '';
+
+      const vermelhasPorAluno = {};
+      notas.forEach(item => {
+        if (!vermelhasPorAluno[item.aluno]) {
+          vermelhasPorAluno[item.aluno] = [];
+        }
+        vermelhasPorAluno[item.aluno].push(`${item.disciplina} (${item.nota})`);
+      });
+
+      if (notas.length === 0) {
+        html += '<p><em>Nenhum aluno com nota vermelha neste bimestre.</em></p>';
+      } else {
+        html += '<h2>Alunos com Notas Vermelhas</h2>';
+
+        const maxVermelhas = Math.max(...Object.values(vermelhasPorAluno).map(arr => arr.length));
+
+        html += '<table><tr><th>Aluno</th>';
+        for (let i = 1; i <= maxVermelhas; i++) {
+          html += `<th>Nota ${i}</th>`;
+        }
+        html += '</tr>';
+
+        for (const aluno in vermelhasPorAluno) {
+          const disciplinas = vermelhasPorAluno[aluno];
+          const destaque = disciplinas.length >= 4;
+
+          const linhaStyle = destaque ? ' style="background-color: yellow;"' : '';
+          const nomeStyle = destaque ? ' style="color:red; font-weight:bold;"' : '';
+
+          html += `<tr${linhaStyle}><td${nomeStyle}>${aluno}</td>`;
+          for (let i = 0; i < maxVermelhas; i++) {
+            html += `<td>${disciplinas[i] || ''}</td>`;
+          }
+          html += '</tr>';
+        }
+
+        html += '</table>';
+      }
+
+      const semNotaPorAluno = {};
+      semNotas.forEach(item => {
+        if (!semNotaPorAluno[item.aluno]) {
+          semNotaPorAluno[item.aluno] = [];
+        }
+        semNotaPorAluno[item.aluno].push(item.disciplina);
+      });
+
+      if (semNotas.length === 0) {
+        html += '<p><em>Todos os alunos têm notas lançadas.</em></p>';
+      } else {
+        html += '<h2>Alunos Sem Nota Lançada</h2>';
+
+        const maxSemNotas = Math.max(...Object.values(semNotaPorAluno).map(arr => arr.length));
+
+        html += '<table><tr><th>Aluno</th>';
+        for (let i = 1; i <= maxSemNotas; i++) {
+          html += `<th>Disciplina ${i}</th>`;
+        }
+        html += '</tr>';
+
+        for (const aluno in semNotaPorAluno) {
+          const disciplinas = semNotaPorAluno[aluno];
+          html += `<tr><td>${aluno}</td>`;
+          for (let i = 0; i < maxSemNotas; i++) {
+            html += `<td>${disciplinas[i] || ''}</td>`;
+          }
+          html += '</tr>';
+        }
+
+        html += '</table>';
+      }
+
+      tabelaContainer.innerHTML = html;
+    }
+
+    document.getElementById('bimestre').addEventListener('change', e => {
+      carregarDados(e.target.value);
+    });
+
+    carregarDados(1);
   </script>
 
 </body>
