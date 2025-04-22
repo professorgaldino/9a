@@ -59,31 +59,6 @@
       border-radius: 8px;
     }
 
-    .page-selector {
-      margin-top: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      padding: 10px;
-    }
-
-    .page-selector button {
-      background: #fff;
-      border: 2px solid #007bff;
-      color: #007bff;
-      font-size: 16px;
-      padding: 5px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s ease-in-out;
-    }
-
-    .page-selector button:hover {
-      background: #007bff;
-      color: white;
-    }
-
     iframe {
       flex: 1;
       border: none;
@@ -93,93 +68,68 @@
 </head>
 <body>
 
-  <div style="text-align: center; padding: 10px; background-color: #e9ecef;">
-    <button onclick="loadAnalysis()" 
-            style="background: #007bff; color: white; border: none; padding: 10px 20px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer;">
-      📊 Análise da Sala
-    </button>
-  </div>
-
+  <!-- Barra de navegação -->
   <div class="nav">
-    <button onclick="window.location.href='https://professorgaldino.github.io/sitetv/sala.html'">← Voltar para as salas</button>
+    <button onclick="window.location.href='https://professorgaldino.github.io/sitetv/sala.html'">
+      ← Voltar para as salas
+    </button>
 
+    <!-- Controles para navegação entre páginas -->
     <div class="page-controls">
       <button onclick="goPrev()">← Anterior</button>
       <span class="page-number" id="page-number">Página: 1</span>
       <button onclick="goNext()">Próxima →</button>
+      <button onclick="window.location.href='analise.html'">📊 Análise</button>
     </div>
 
-    <button onclick="window.location.href='outros9a.html'">Verificar outras situações →</button>
+    <button onclick="window.location.href='outros9a.html'">
+      Verificar outras situações →
+    </button>
   </div>
 
-  <div class="page-selector" id="page-selector"></div>
-
-  <iframe id="viewer" src=""></iframe>
+  <!-- Exibição do conteúdo da página -->
+  <iframe id="viewer" src="a1.html"></iframe>
 
   <script>
+    // Lista das páginas do boletim
     const pages = [
-      "a1.html", "a2.html", "a3.html", "a4.html", "a5.html", "a7.html", "a8.html", "a9.html", 
-      "a10.html", "a11.html", "a12.html", "a14.html", "a15.html", "a16.html", "a17.html", "a18.html",
-      "a19.html", "a20.html", "a21.html", "a22.html", "a23.html", "a24.html", "a25.html", "a26.html",
-      "a27.html", "a28.html", "a30.html", "a31.html", "a32.html", "a33.html"
+      "a1.html", "a2.html", "a3.html", "a4.html", "a5.html", "a7.html", "a8.html",
+      "a9.html", "a10.html", "a11.html", "a12.html", "a14.html", "a15.html", "a16.html",
+      "a17.html", "a18.html", "a19.html", "a20.html", "a21.html", "a22.html", "a23.html",
+      "a24.html", "a25.html", "a26.html", "a27.html", "a28.html", "a30.html", "a31.html",
+      "a32.html", "a33.html"
     ];
 
-    let currentIndex = 0;
-    const viewer = document.getElementById("viewer");
-    const pageNumber = document.getElementById("page-number");
-    const pageSelector = document.getElementById("page-selector");
+    let currentIndex = 0; // Índice da página atual
 
+    const viewer = document.getElementById("viewer"); // iframe para exibição da página
+    const pageNumber = document.getElementById("page-number"); // Exibição do número da página
+
+    // Função para atualizar o iframe com a página atual
     function updateViewer() {
       const currentPage = pages[currentIndex];
-      const pageNum = currentPage.match(/\d+/)?.[0] || "?";
-      viewer.src = currentPage;
-      pageNumber.textContent = "Página: " + pageNum;
-      highlightCurrentButton();
+      const pageNum = currentPage.match(/\d+/)[0]; // Extrai o número da página do nome do arquivo
+      viewer.src = currentPage; // Atualiza o conteúdo do iframe
+      pageNumber.textContent = "Página: " + pageNum; // Atualiza o número da página visível
     }
 
+    // Função para navegar para a página anterior
     function goPrev() {
       if (currentIndex > 0) {
-        currentIndex--;
-        updateViewer();
+        currentIndex--; // Decrementa o índice
+        updateViewer(); // Atualiza a visualização
       }
     }
 
+    // Função para navegar para a próxima página
     function goNext() {
       if (currentIndex < pages.length - 1) {
-        currentIndex++;
-        updateViewer();
+        currentIndex++; // Incrementa o índice
+        updateViewer(); // Atualiza a visualização
       }
     }
 
-    function loadAnalysis() {
-      viewer.src = "analise.html";
-      pageNumber.textContent = "📊 Análise da Sala";
-      highlightCurrentButton(null);
-    }
-
-    function highlightCurrentButton(activeIndex = currentIndex) {
-      const buttons = pageSelector.querySelectorAll("button");
-      buttons.forEach((btn, idx) => {
-        const isActive = idx === activeIndex;
-        btn.style.background = isActive ? "#007bff" : "#fff";
-        btn.style.color = isActive ? "#fff" : "#007bff";
-      });
-    }
-
-    function createPageButtons() {
-      pages.forEach((page, index) => {
-        const pageNum = page.match(/\d+/)?.[0] || "?";
-        const button = document.createElement("button");
-        button.textContent = pageNum;
-        button.addEventListener("click", () => {
-          currentIndex = index;
-          updateViewer();
-        });
-        pageSelector.appendChild(button);
-      });
-    }
-
-    createPageButtons();
+    // Inicializa com a primeira página
     updateViewer();
   </script>
 
